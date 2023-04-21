@@ -40,23 +40,8 @@ const Grid = ({ rowData, columns, setData, setModifyingRow }: Props) => {
   const { sortingModel, handleSortColumn, sortRows } = useSortGrid(columns)
   const { filterModel, setFilterModel, filterRows } = useFilterGrid()
 
-  const [filteringColumn, setFilteringColumn] = useState<ColumnId | null>(null)
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  const handleCloseFilterMenu = () => {
-    setAnchorEl(null)
-  }
-
   const handleDeleteRow = (id: number) => {
     setData(rowData.filter((row) => row.id !== id))
-  }
-
-  const handleClickFilterMenu = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    columnId: ColumnId
-  ) => {
-    e.stopPropagation()
-    setAnchorEl(e.currentTarget)
-    setFilteringColumn(columnId)
   }
 
   const sortedRows = sortRows(rowData)
@@ -76,22 +61,6 @@ const Grid = ({ rowData, columns, setData, setModifyingRow }: Props) => {
         )}
       </Box>
       <TableContainer component={Paper}>
-        <Popover
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          onClose={handleCloseFilterMenu}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        >
-          <FilterMenu
-            filteringColumn={filteringColumn}
-            filterModel={filterModel}
-            setFilterModel={setFilterModel}
-          />
-        </Popover>
-
         <Table>
           <TableHead>
             <TableRow>
@@ -121,11 +90,11 @@ const Grid = ({ rowData, columns, setData, setModifyingRow }: Props) => {
                           <ArrowUpward />
                         ))}
                     </Box>
-                    <IconButton
-                      onClick={(e) => handleClickFilterMenu(e, col.id)}
-                    >
-                      <FilterAlt />
-                    </IconButton>
+                    <FilterMenu
+                      columnId={col.id}
+                      filterModel={filterModel}
+                      setFilterModel={setFilterModel}
+                    />
                   </Box>
                 </TableCell>
               ))}
